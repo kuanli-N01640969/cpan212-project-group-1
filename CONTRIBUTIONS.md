@@ -13,6 +13,10 @@
 3. External API
 5. Endpoint List
 
+## Owen Fedchenko (Owenfedchenko-N10004708)
+1. Wireframes
+2. Later Features 
+
 ### Maliki Cornwall-Douglas (MalikiC-D)
 No assigned tasks for M1 (joined the group late)
 
