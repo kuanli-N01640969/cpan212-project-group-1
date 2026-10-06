@@ -9,6 +9,8 @@
 7. Team roles
 8. Repo setup
 
+### Maliki Cornwall-Douglas (MalikiC-D)
+No tasks were assigned for M1 since I joined the group late.
 
 
 ⁠
