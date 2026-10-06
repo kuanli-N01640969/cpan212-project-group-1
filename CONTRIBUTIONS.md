@@ -11,7 +11,7 @@
 
 ### Abeer Rashid (AbeerRashid)
 3. External API
-5. EndpointList
+5. Endpoint List
 
 ### Maliki Cornwall-Douglas (MalikiC-D)
 No assigned tasks for M1 (joined the group late)

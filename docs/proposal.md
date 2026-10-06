@@ -111,18 +111,19 @@ A meal entry represents one food item recorded for a meal in a daily log.
 `calculatedCalories` = `servings` × `caloriesPerServing`
 
 ## 5. Endpoint List
-|--Method--|--Path--|--Description--|--Success Code --|--Error Code--|
-GET /api/nutrition/search | Search USDA database for food items and return simplified nutrition data | Success: 200 OK | Errors: 400, 500 |
-GET /api/logs | List all daily logs for the signed-in user | Success: 200 OK | Errors: 401, 500 |
-GET /api/logs/:id | Get details for a single daily log by ID | Success: 200 OK | Errors: 401, 404, 500 |
-POST /api/logs | Create a new daily log with a target calorie goal | Success: 201 Created | Errors: 400, 401, 500 |
-PUT /api/logs/:id | Update a daily log's target calorie goal | Success: 200 OK | Errors: 400, 401, 404, 500 |
-DELETE /api/logs/:id | Delete a daily log and all associated meal entries | Success: 200 OK | Errors: 401, 404, 500 |
-GET /api/logs/:logId/meals | List all meal entries for a specific daily log | Success: 200 OK | Errors: 401, 404, 500 |
-GET /api/meals/:id | Get details for a single meal entry | Success: 200 OK | Errors: 401, 404, 500 |
-POST /api/logs/:logId/meals | Create a new meal entry (calculates portion calories) | Success: 201 Created | Errors: 400, 401, 404, 500 |
-PUT /api/meals/:id | Update a meal entry (recalculates portion calories) | Success: 200 OK | Errors: 400, 401, 404, 500 |
-DELETE /api/meals/:id | Delete a meal entry from a daily log | Success: 200 OK | Errors: 401, 404, 500 |
+|Method|Path|Description|Success Code|Error Code|
+|---|---|---|---|---|
+GET | /api/nutrition/search | Search USDA database for food items and return simplified nutrition data | Success: 200 OK | Errors: 400, 500 |
+GET | /api/logs | List all daily logs for the signed-in user | Success: 200 OK | Errors: 401, 500 |
+GET | /api/logs/:id | Get details for a single daily log by ID | Success: 200 OK | Errors: 401, 404, 500 |
+POST| /api/logs | Create a new daily log with a target calorie goal | Success: 201 Created | Errors: 400, 401, 500 |
+PUT | /api/logs/:id | Update a daily log's target calorie goal | Success: 200 OK | Errors: 400, 401, 404, 500 |
+DELETE | /api/logs/:id | Delete a daily log and all associated meal entries | Success: 200 OK | Errors: 401, 404, 500 |
+GET | /api/logs/:logId/meals | List all meal entries for a specific daily log | Success: 200 OK | Errors: 401, 404, 500 |
+GET | /api/meals/:id | Get details for a single meal entry | Success: 200 OK | Errors: 401, 404, 500 |
+POST | /api/logs/:logId/meals | Create a new meal entry (calculates portion calories) | Success: 201 Created | Errors: 400, 401, 404, 500 |
+PUT | /api/meals/:id | Update a meal entry (recalculates portion calories) | Success: 200 OK | Errors: 400, 401, 404, 500 |
+DELETE | /api/meals/:id | Delete a meal entry from a daily log | Success: 200 OK | Errors: 401, 404, 500 |
 
 ## 6. Wireframes
 
