@@ -22,6 +22,39 @@ The MVP is designed around quick, structured meal entry rather than a full diet-
 - Progress tracker
 - Social media aspect. Can add friends and compare progress and meal plans, recipes etc.
 
+
+## 3. External API
+Name of API: USDA FoodData Central API
+Documentation: https://fdc.nal.usda.gov/api-guide/
+
+API Key Requirement: Requires a free API key from data.gov. The key is stored securely as an environment variable (FDC_API_KEY) on the Express server in a local .env file. It is never exposed in the client frontend or public GitHub repository.
+
+Rate Limits & Terms: Default rate limit of 1,000 requests per hour per IP address. Exceeding this limit causes a temporary 1-hour block. Data is in the public domain under CC0; USDA requests attribution as the source.
+
+Real Request URL:
+HTTP
+GET https://api.nal.usda.gov/fdc/v1/foods/search?query=banana
+
+
+Trimmed Sample Response:
+{
+  "totalHits": 1,
+  "foods": [
+    {
+      "fdcId": 1102653,
+      "description": "Bananas, raw",
+      "servingSize": 100,
+      "servingSizeUnit": "g",
+      "nutrients": {
+        "calories": 89,
+        "protein": 1.09,
+        "fat": 0.33,
+        "carbohydrates": 22.8
+      }
+    }
+  ]
+}
+
 ## 4. Data Model Draft
 
 The app uses three resources: `User`, `DailyLog`, and `MealEntry`.
@@ -76,6 +109,20 @@ A meal entry represents one food item recorded for a meal in a daily log.
 
 `calculatedCalories` is calculated by the server using:
 `calculatedCalories` = `servings` × `caloriesPerServing`
+
+## 5. Endpoint List
+|--Method--|--Path--|--Description--|--Success Code --|--Error Code--|
+GET /api/nutrition/search | Search USDA database for food items and return simplified nutrition data | Success: 200 OK | Errors: 400, 500 |
+GET /api/logs | List all daily logs for the signed-in user | Success: 200 OK | Errors: 401, 500 |
+GET /api/logs/:id | Get details for a single daily log by ID | Success: 200 OK | Errors: 401, 404, 500 |
+POST /api/logs | Create a new daily log with a target calorie goal | Success: 201 Created | Errors: 400, 401, 500 |
+PUT /api/logs/:id | Update a daily log's target calorie goal | Success: 200 OK | Errors: 400, 401, 404, 500 |
+DELETE /api/logs/:id | Delete a daily log and all associated meal entries | Success: 200 OK | Errors: 401, 404, 500 |
+GET /api/logs/:logId/meals | List all meal entries for a specific daily log | Success: 200 OK | Errors: 401, 404, 500 |
+GET /api/meals/:id | Get details for a single meal entry | Success: 200 OK | Errors: 401, 404, 500 |
+POST /api/logs/:logId/meals | Create a new meal entry (calculates portion calories) | Success: 201 Created | Errors: 400, 401, 404, 500 |
+PUT /api/meals/:id | Update a meal entry (recalculates portion calories) | Success: 200 OK | Errors: 400, 401, 404, 500 |
+DELETE /api/meals/:id | Delete a meal entry from a daily log | Success: 200 OK | Errors: 401, 404, 500 |
 
 ## 6. Wireframes
 
