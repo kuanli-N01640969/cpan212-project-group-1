@@ -1,4 +1,5 @@
-import { dailyLogs } from "../data/mockData.js";
+import { randomUUID } from "node:crypto";
+import { dailyLogs, mealEntries } from "../data/mockData.js";
 
 // GET /api/logs - Retrieve all daily logs
 export function getAllLogs(req, res, next) {
@@ -34,23 +35,19 @@ export function getLogById (req, res, next) {
     }
 }
 
-// POST /api/logs - Create a new daily log
+// POST /api/logs - Create a new daily log (body already checked by validateLog)
 export function createLog(req, res, next) {
-    try{
-        const { date, totalCalories, meals } =req.body;
-// Basic validation check
-        if (!date || totalCalories === undefined) {
-            return res.status(400).json({
-                success: false,
-                message: 'Please provide a date and totalCalories'
-            });
-        }
+    try {
+        const { date, targetCalories } = req.body;
+        const now = new Date().toISOString();
 
-    const newLog = {
-            _id: String(Date.now()), // temporary unique id generator for mock data
+        const newLog = {
+            _id: randomUUID(),
+            userId: "user-1", // no auth yet, so logs belong to the sample user
             date,
-            totalCalories,
-            meals: meals || []
+            targetCalories,
+            createdAt: now,
+            updatedAt: now
         };
 
         dailyLogs.push(newLog);
@@ -64,47 +61,55 @@ export function createLog(req, res, next) {
     }
 }
 
-// PUT /api/logs/:id - Update an existing daily log
-export function updateLog(req, res){
-    const {id} = req.params;
-    const { date, totalCalories, meals} = req.body;
+// PUT /api/logs/:id - Update an existing daily log (body already checked by validateUpdateLog)
+export function updateLog(req, res, next) {
+    try {
+        const { id } = req.params;
+        const { date, targetCalories } = req.body;
 
-    const log = dailyLogs.find(l => l._id === id);
+        const log = dailyLogs.find(l => l._id === id);
 
-    if (!log) {
-        return res.status(404).json({
-            success: false,
-            message: `Daily log with ID ${id} not found`
+        if (!log) {
+            const error = new Error(`Daily log with ID ${id} not found`);
+            error.status = 404;
+            throw error;
+        }
+        if (date !== undefined) log.date = date;
+        if (targetCalories !== undefined) log.targetCalories = targetCalories;
+        log.updatedAt = new Date().toISOString();
+
+        res.status(200).json({
+            success: true,
+            data: log
         });
+    } catch (err) {
+        next(err);
     }
-    if (date !== undefined) log.date = date;
-    if (totalCalories !== undefined) log.totalCalories = totalCalories;
-    if (meals !== undefined) log.meals = meals;
-
-    res.status(200).json({
-        success: true,
-        data: log
-    });
 }
-// DELETE /api/logs/:id - Delete a daily log
-export function deleteLog(req, res) {
-    const { id } = req.params;
-    const index = dailyLogs.findIndex(l => l._id === id);
 
-    if (index === -1) {
-        return res.status(404).json({
-            success: false,
-            message: `Daily log with ID ${id} not found`
-        });
+// DELETE /api/logs/:id - Delete a daily log (and its meals), responds 204 with no body
+export function deleteLog(req, res, next) {
+    try {
+        const { id } = req.params;
+        const index = dailyLogs.findIndex(l => l._id === id);
+
+        if (index === -1) {
+            const error = new Error(`Daily log with ID ${id} not found`);
+            error.status = 404;
+            throw error;
+        }
+
+        dailyLogs.splice(index, 1);
+
+        // remove this log's meals too so none are left orphaned
+        for (let i = mealEntries.length - 1; i >= 0; i--) {
+            if (mealEntries[i].dailyLogId === id) mealEntries.splice(i, 1);
+        }
+
+        res.status(204).send();
+    } catch (err) {
+        next(err);
     }
-
-    const deletedLog = dailyLogs.splice(index, 1)[0];
-
-    res.status(200).json({
-        success: true,
-        message: `Daily log with ID ${id} successfully deleted`,
-        data: deletedLog
-    });
 }
 
 /*
