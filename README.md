@@ -8,3 +8,4 @@
 
 ## M2 EXPRESS REST API
 ### Abeer Rashid (AbeerRashid)
+### Maliki Cornwall-Douglas (MalikiC-D)
