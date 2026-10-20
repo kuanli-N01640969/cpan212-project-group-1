@@ -15,7 +15,7 @@
 
 ## Owen Fedchenko (Owenfedchenko-N10004708)
 1. Wireframes
-2. Later Features 
+2. Later Features
 
 ### Maliki Cornwall-Douglas (MalikiC-D)
 No assigned tasks for M1 (joined the group late)
@@ -31,3 +31,4 @@ No assigned tasks for M1 (joined the group late)
 - **Logs and meals CRUD:** I fixed the crashing meal handler, added the missing meal endpoints (list, get one, update, delete), updated create/update/delete for logs, and wired up the routes. New items get their IDs from `crypto.randomUUID()`.
 - **Validation:** I added validation for every POST and PUT body on logs and meals. Bad input returns a 400 that lists each field that failed, and unknown IDs return a 404.
 - **Docs:** I added the run steps and endpoint table to `api/README.md`.
+  - **Testing and fixes:** I ran every endpoint with curl in Git Bash, built the Bruno requests, and fixed the USDA search bugs.

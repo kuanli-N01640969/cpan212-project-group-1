@@ -1,0 +1,16 @@
+info:
+  name: Get log
+  type: http
+  seq: 2
+
+http:
+  method: GET
+  url: http://localhost:4000/api/logs/log-1
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

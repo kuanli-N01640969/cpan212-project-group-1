@@ -12,7 +12,7 @@ export async function searchFood(req, res, next) {
       });
     }
     const foods = await searchFoodFromUSDA(query);
-    res.stats(200).json({
+    res.status(200).json({
       success: true,
       count: foods.length,
       data: foods,
