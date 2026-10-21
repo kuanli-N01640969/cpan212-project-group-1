@@ -1,5 +1,10 @@
 # API Backend - Milestone 2
 
+## Setup Instructions
+1. Run `npm install` inside the `api/` folder.
+2. Create a `.env` file based on `.env.example` and add your USDA API key. (use the following: cp .env.example .env)
+3. Run `npm run dev` to start the server on port 4000.
+** Key has been provided separately.
 Express 5 REST API for the Calorie Goal Tracker. Data is stored in memory (it resets every time the server restarts) and food lookups come from the USDA FoodData Central API.
 
 ## Setup

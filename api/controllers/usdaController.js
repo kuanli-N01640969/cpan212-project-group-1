@@ -18,6 +18,7 @@ export async function searchFood(req, res, next) {
       data: foods,
     });
   } catch (err) {
+    // Forwards service errors (timeouts, network drops, etc.) to global error middleware
     next(err);
   }
 }
