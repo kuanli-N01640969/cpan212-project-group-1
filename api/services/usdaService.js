@@ -5,7 +5,7 @@ const BASE_URL = "https://api.nal.usda.gov/fdc/v1/foods/search";
 
 const TIMEOUT_MS = 5000; // 5 sec deadline for USDA to respond
 
-const cache = new Map(); // Creates a fast, temporary key-value storage directly in your server's memory.
+const cache = new Map(); // Creates a fast, temporary key-value storage directly in our server's memory.
 const CACHE_TTL_MS = 60 * 60 * 1000; // Cache for 1 hour; it doesnt re-search for the same food multiple times and retuns the save result
 
 //API Key Guard: Checks immediately if the key exists, throwing a clean 500 error if it's missing.
@@ -17,6 +17,7 @@ async function fetchFromUSDA(query) {
     );
   }
 
+  // FIXED: Constructs the full API URL with query parameters and environment credentials
   const url = `${BASE_URL}?query=${encodeURIComponent(query)}&pageSize=10&api_key=${USDA_API_KEY}`;
 
   const res = await fetch(url, {

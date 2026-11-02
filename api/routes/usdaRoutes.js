@@ -7,3 +7,4 @@ const router = Router();
 router.get('/search', searchFood);
 
 export default router;
+
