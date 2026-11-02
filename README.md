@@ -8,6 +8,8 @@
 
 ## M2 EXPRESS REST API
 ### Abeer Rashid (AbeerRashid)
+- **AI Use:** For the development of the M2 portion, I utilized AI-assisted tools (Google Gemini) to brainstorm for architectural design patterns, debugging support, and understanding concepts bette to implement them into the design. Also to better understand how it ties together in simple terms to make navigation better for myself.
+
 ### Maliki Cornwall-Douglas (MalikiC-D)
 
 # API Backend - Milestone 2
