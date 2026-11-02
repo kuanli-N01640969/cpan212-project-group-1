@@ -4,5 +4,6 @@ export default function NutritionInfo() {
       <h1>Nutritional Information</h1>
       <p>Cheese is good</p>
     </div>
+    //dropbar or search engine to find nutritional information on food items
   );
 }
