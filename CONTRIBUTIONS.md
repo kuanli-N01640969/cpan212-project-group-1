@@ -25,7 +25,9 @@ No assigned tasks for M1 (joined the group late)
 **App Core & Routing:** Implemented `api/app.js`, setting up Express, middleware execution order, and mounting modular routers.
 - **Error Handling Architecture:** Built the custom `HttpError` class, the 404 fallback middleware (`notFound.js`), and the centralized global error handler (`errorHandler.js`).
 - **Routers & Controllers:** Developed modular route groups and controller functions for managing logs, nested meals, and USDA search queries.
-- **Pull Request:** [#9](link-to-pr)
+- **Pull Request:** [#9]
+- **Removed duplicate gitignore file:** There was a root gitignore file and in calorie goal tracker folder. Have reviewed and removed the secondary file.
+- **Pull Request:** [#14]
 
 ### Maliki Cornwall-Douglas (MalikiC-D)
 - **Logs and meals CRUD:** I fixed the crashing meal handler, added the missing meal endpoints (list, get one, update, delete), updated create/update/delete for logs, and wired up the routes. New items get their IDs from `crypto.randomUUID()`.
