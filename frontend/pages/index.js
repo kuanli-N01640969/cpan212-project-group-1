@@ -37,5 +37,7 @@ export default function SignIn() {
         <button type="submit">Sign In</button>
       </form>
     </div>
+
+    //add link to dailylog page after sign in.
   );
 }
