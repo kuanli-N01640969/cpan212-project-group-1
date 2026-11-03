@@ -1,4 +1,5 @@
 import express from 'express';
+import cors from "cors";
 import logRoutes from '../api/routes/logRoutes.js';
 import mealRoutes from '../api/routes/mealRoutes.js';
 import mealItemRoutes from '../api/routes/mealItemRoutes.js';
@@ -6,7 +7,12 @@ import usdaRoutes from '../api/routes/usdaRoutes.js';
 import { notFound } from "../api/middleware/notFound.js";
 import { errorHandler } from "../api/middleware/errorHandler.js";
 
+
 export const app = express();
+
+app.use(cors({
+  origin: "http://localhost:3000"
+}));
 
 // app.use method adds middleware functions to the application's request-response processing pipeline
 // Order matters: Express runs middleware and routes top to bottom.
