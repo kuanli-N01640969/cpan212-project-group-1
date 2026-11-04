@@ -31,7 +31,7 @@ export default function NutritionInfo() {
   }
 
   return (
-    <div>
+    <div className="nutritionInfo">
       <h1>Nutritional Information</h1>
 
       <form onSubmit={handleSearch}>
