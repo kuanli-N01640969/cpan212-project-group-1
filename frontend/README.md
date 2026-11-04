@@ -1,40 +1,85 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/pages/api-reference/create-next-app).
+# Frontend - Milestone 3
 
-## Getting Started
+## How to Run the Project
 
-First, run the development server:
+This project consists of two applications:
+- Backend: Node.js and Express API
+- Frontend: Next.js application
+
+Both applications must be running for the calorie tracker to work properly.
+
+### 1. Install Dependencies
+
+Open a terminal in the root project folder and install the backend dependencies:
+
+```bash
+npm install
+```
+
+Navigate to the frontend folder and install its dependencies:
+
+```bash
+cd frontend
+npm install
+```
+
+### 2. Configure Environment Variables
+
+In the root project folder, create a `.env` file containing:
+
+```env
+PORT=4000
+USDA_API_KEY=your_usda_api_key
+```
+
+| Variable | Description |
+|---|---|
+| `PORT` | Port used by the Express backend (default: 4000) |
+| `USDA_API_KEY` | API key used to retrieve nutritional information from the USDA FoodData Central API |
+
+A USDA API key can be obtained from https://fdc.nal.usda.gov/api-key-signup.
+
+The `.env` file should not be committed to GitHub because it contains a private API key.
+
+### 3. Start the Backend
+
+Open a terminal in the root project folder and run:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The Express backend will run at:
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+http://localhost:4000
 
-[API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
+### 4. Start the Frontend
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) instead of React pages.
+Open a second terminal, navigate to the frontend folder, and run:
 
-This project uses [`next/font`](https://nextjs.org/docs/pages/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+cd frontend
+npm run dev
+```
 
-## Learn More
+The Next.js frontend will run at:
 
-To learn more about Next.js, take a look at the following resources:
+http://localhost:3000
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn-pages-router) - an interactive Next.js tutorial.
+Open this address in your browser to use the calorie tracker.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 5. Using the Application
 
-## Deploy on Vercel
+Once both servers are running, users can:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Sign In to access the Daily Logs page.
+- Set or update their daily calorie goal.
+- Search for foods using the USDA API.
+- Add foods to breakfast, lunch, or dinner by entering quantities in grams.
+- Edit or delete existing food entries.
+- View their total consumed and remaining calories.
+- Search for nutritional information on the Nutritional Information page.
+- Read about the app and team
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/pages/building-your-application/deploying) for more details.
+
+

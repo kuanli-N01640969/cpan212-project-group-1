@@ -3,7 +3,7 @@ import Link from "next/link";
 export default function Navbar() {
   return (
     <nav className="navbar">
-      <h2>CALORIE TRACKER</h2>
+      <h1>Calorie Tracker</h1>
 
       <div className="navLinks">
         <Link href="/">Sign In</Link>
