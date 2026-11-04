@@ -13,9 +13,10 @@
 3. External API
 5. Endpoint List
 
-## Owen Fedchenko (Owenfedchenko-N10004708)
+## Owen Fedchenko (Owenfeds)
 1. Wireframes
-2. Later Features
+2. Frontend dev
+3. Later Features
 
 ### Maliki Cornwall-Douglas (MalikiC-D)
 No assigned tasks for M1 (joined the group late)
@@ -34,3 +35,11 @@ No assigned tasks for M1 (joined the group late)
 - **Validation:** I added validation for every POST and PUT body on logs and meals. Bad input returns a 400 that lists each field that failed, and unknown IDs return a 404.
 - **Testing and docs:** I ran every endpoint with curl in Git Bash, built the Bruno requests, and wrote the run steps, endpoint table and Testing section in `api/README.md`.
 - **USDA fixes:** I fixed the bugs that stopped the USDA search from working so the demo runs.
+
+## M3 Next.js Frontend
+### Owen Fedchenko (Owenfeds)
+**Wireframes & Navigation:** I set up the wireframes for the app and built a nav bar to navigate to each page, while making sure the sign in is the defualt home page that navigates to the daily log page.
+- **API fetch handling:** Built the API service modules to fetch the API from the backend
+- **Pages:** Built the front end code for the pages with the functions that call the API and forms to submit the daily logs.
+- **CSS:** Added a globals.css to style the app. Could still use improvement.
+- **Readme:** Wrote front end readme instructions
