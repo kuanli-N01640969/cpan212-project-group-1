@@ -1,0 +1,216 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f5f5f5;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #586c83;
+  padding: 18px 40px;
+  color: white;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.navbar h2 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+.navLinks {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.navLinks a {
+  color: white;
+  text-decoration: none;
+  font-size: 15px;
+  padding: 10px 15px;
+  border-radius: 5px;
+  transition: background-color 0.2s;
+}
+
+.navLinks a:hover {
+  background-color: #405367;
+}
+
+.navLinks a.active {
+  background-color: #405367;
+  font-weight: bold;
+}
+
+.dailyLogs {
+  max-width: 1200px;
+  width: 90%;
+  margin: 30px auto;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.dailyLogs h1 {
+  color: #333;
+  margin-bottom: 25px;
+}
+
+.dailyLogs h3 {
+  color: #586c83;
+  margin-top: 0;
+}
+
+.logSection {
+  background-color: white;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+
+.dailyLogs input,
+.dailyLogs select {
+  padding: 10px;
+  margin: 5px 10px 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+.dailyLogs button {
+  background-color: #768aa1;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  margin: 5px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.dailyLogs button:hover {
+  background-color: #405367;
+}
+
+.mealItem {
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.mealButtons {
+  display: flex;
+  gap: 10px;
+}
+
+.mealButtons button {
+  margin: 0;
+}
+
+.mealItem:last-child {
+  border-bottom: none;
+}
+
+.calorieSummary p {
+  margin: 8px 0;
+}
+
+.foodResult {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+
+/* Sign In Page */
+
+.signInPage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 90px);
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.signInBox {
+  background-color: white;
+  padding: 35px;
+  width: 100%;
+  max-width: 400px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.signInBox h1 {
+  text-align: center;
+  color: #586c83;
+  margin-top: 0;
+  margin-bottom: 25px;
+}
+
+.signInBox input {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+  font-size: 14px;
+}
+
+.signInBox button {
+  width: 100%;
+  padding: 12px;
+  background-color: #586c83;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+.signInBox button:hover {
+  background-color: #405367;
+}
+
+/* Nutritional Information Page */
+
+.nutritionInfo {
+  margin: 40px;
+  text-align: left;
+}
+
+.nutritionInfo h1 {
+  color: #333;
+  margin-bottom: 25px;
+}
+
+.nutritionInfo input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-right: 10px;
+}
+
+.nutritionInfo button {
+  padding: 10px 15px;
+  background-color: #586c83;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.nutritionInfo button:hover {
+  background-color: #405367;
+}
+
+.aboutUs {
+  margin: 40px;
+  text-align: left;
+}
+
+
+
