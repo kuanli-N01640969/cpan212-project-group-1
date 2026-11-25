@@ -1,4 +1,7 @@
+import { createApiError } from "./apiError";
+
 const API_URL = "http://localhost:4000/api/logs";
+const MEAL_ITEM_URL = "http://localhost:4000/api/meals";
 
 // Get all meals for a daily log
 export async function getMealsForLog(logId) {
@@ -7,7 +10,7 @@ export async function getMealsForLog(logId) {
   );
 
   if (!response.ok) {
-    throw new Error("Failed to fetch meals");
+    throw await createApiError(response, "Failed to fetch meals");
   }
 
   const result = await response.json();
@@ -23,12 +26,12 @@ export async function addMealToLog(logId, mealData) {
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify(mealData)
+      body: JSON.stringify(mealData),
     }
   );
 
   if (!response.ok) {
-    throw new Error("Failed to add meal");
+    throw await createApiError(response, "Failed to add meal");
   }
 
   const result = await response.json();
@@ -38,14 +41,14 @@ export async function addMealToLog(logId, mealData) {
 //Delete meal from daily log
 export async function deleteMeal(mealId) {
   const response = await fetch(
-    `http://localhost:4000/api/meals/${mealId}`,
+    `${MEAL_ITEM_URL}/${mealId}`,
     {
       method: "DELETE"
     }
   );
 
   if (!response.ok) {
-    throw new Error("Failed to delete meal");
+    throw await createApiError(response, "Failed to delete meal");
   }
 
   return true;
@@ -53,18 +56,18 @@ export async function deleteMeal(mealId) {
 //Update meal item
 export async function updateMeal(mealId, mealData) {
   const response = await fetch(
-    `http://localhost:4000/api/meals/${mealId}`,
+    `${MEAL_ITEM_URL}/${mealId}`,
     {
       method: "PUT",
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify(mealData)
+      body: JSON.stringify(mealData),
     }
   );
 
   if (!response.ok) {
-    throw new Error("Failed to update meal");
+    throw await createApiError(response, "Failed to update meal");
   }
 
   const result = await response.json();

@@ -1,8 +1,10 @@
 
 import { useState, useEffect } from "react";
-import { getAllLogs, createLog, updateLog } from "../services/logApi";
 import { getMealsForLog, addMealToLog, deleteMeal, updateMeal } from "../services/mealApi";
 import { searchFood } from "../services/usdaApi";
+import { createLog, updateLog } from "../services/logApi";
+import { toFieldErrorMap } from "../services/apiError";
+import LogBrowser from "../components/LogBrowser";
 
 
 export default function DailyLogs() {
@@ -19,24 +21,28 @@ export default function DailyLogs() {
   const [editingMealId, setEditingMealId] = useState(null);
   const [editGrams, setEditGrams] = useState("");
   const [message, setMessage] = useState("");
+  const [goalFieldErrors, setGoalFieldErrors] = useState({});
+  const [logRefreshKey, setLogRefreshKey] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    async function loadLogs() {
+    if (!selectedLog?._id) {
+      setMeals([]);
+      setCalorieGoal("");
+      setLoading(false);
+      return;
+    }
+
+    setCalorieGoal(selectedLog.targetCalories.toString());
+    setGoalFieldErrors({});
+
+    async function loadMeals() {
       try {
-        const data = await getAllLogs();
-        setLogs(data);
-
-        if (data.length > 0) {
-          const log = data[0];
-          setSelectedLog(log);
-
-          setCalorieGoal(log.targetCalories.toString());
-
-          const mealData = await getMealsForLog(log._id);
-          setMeals(mealData);
-        }
+        setLoading(true);
+        setError("");
+        const mealData = await getMealsForLog(selectedLog._id);
+        setMeals(mealData);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -44,8 +50,8 @@ export default function DailyLogs() {
       }
     }
 
-    loadLogs();
-  }, []);
+    loadMeals();
+  }, [selectedLog?._id]);
 
   // Calculate total calories
   const consumed = meals.reduce(
@@ -62,12 +68,13 @@ export default function DailyLogs() {
     const goal = Number(calorieGoal);
 
     if (!calorieGoal.trim() || !Number.isInteger(goal) || goal <= 0) {
-    setMessage("Please enter a valid calorie goal");
-    return;
+      setMessage("Please enter a valid calorie goal");
+      return;
     }
 
     try {
-    setMessage("");
+      setMessage("");
+      setGoalFieldErrors({});
 
       if (selectedLog) {
         // Update existing daily log
@@ -88,9 +95,11 @@ export default function DailyLogs() {
         setMeals([]);
       }
 
+      setLogRefreshKey((k) => k + 1);
       setMessage("Calorie goal saved successfully!");
     } catch (err) {
-      setMessage("Failed to save calorie goal");
+      setGoalFieldErrors(toFieldErrorMap(err));
+      setMessage(err.message || "Failed to save calorie goal");
     }
   }
 
@@ -215,6 +224,12 @@ export default function DailyLogs() {
     <div className="dailyLogs">
       <h1>Daily Calorie Tracker</h1>
 
+      <LogBrowser
+        selectedLog={selectedLog}
+        onSelectLog={setSelectedLog}
+        refreshKey={logRefreshKey}
+      />
+
       <div className="logSection">
         <h3>Set Daily Calorie Goal</h3>
 
@@ -230,6 +245,9 @@ export default function DailyLogs() {
           Save
         </button>
 
+        {goalFieldErrors.targetCalories && (
+          <p style={{ color: "#b91c1c" }}>{goalFieldErrors.targetCalories}</p>
+        )}
         {message && <p>{message}</p>}
       </div>
 
