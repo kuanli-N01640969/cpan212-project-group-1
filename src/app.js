@@ -6,6 +6,8 @@ import mealItemRoutes from '../api/routes/mealItemRoutes.js';
 import usdaRoutes from '../api/routes/usdaRoutes.js';
 import { notFound } from "../api/middleware/notFound.js";
 import { errorHandler } from "../api/middleware/errorHandler.js";
+import { connectDatabase } from '../api/config/database.js';
+import { mongooseErrorHandler } from "../api/middleware/mongooseErrorHandler.js";
 
 
 export const app = express();
@@ -30,11 +32,19 @@ app.use('/api/usda', usdaRoutes);
 
 // 3. 404 Not Found Middleware (Must go AFTER all valid routes)
 app.use(notFound);
-// 4. Global Error Handler (Must be the very last middleware)
+// 4. Database Error Handler (Pass unrelated error to global)
+app.use(mongooseErrorHandler);
+// 5. Global Error Handler (Must be the very last middleware)
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 4000;
 
-app.listen(PORT, () => {
-    console.log(`Server is running live on port ${PORT}`);
+//Connect to database first, so API doesn't accept request while database is unreachable
+await connectDatabase();
+
+app.listen(PORT, (error) => {
+  if (error) {
+    throw error;
+  }  
+  console.log(`Server is running live on port ${PORT}`);
 });

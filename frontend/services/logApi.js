@@ -1,15 +1,26 @@
+import { createApiError } from "./apiError";
 const API_URL = "http://localhost:4000/api/logs";
 
 // GET all logs
-export async function getAllLogs() {
-  const response = await fetch(API_URL);
+export async function getAllLogs(params = {}) {
+  const searchParams = new URLSearchParams();
 
-  if (!response.ok) {
-    throw new Error("Failed to fetch logs");
+  for (const [key, value] of Object.entries(params)) {
+    if (value !== undefined && value !== null && String(value).trim() !== "") {
+      searchParams.set(key, String(value).trim());
+    }
   }
 
-  const result = await response.json();
-  return result.data;
+  const queryString = searchParams.toString();
+  const url = queryString ? `${API_URL}?${queryString}` : API_URL;
+
+  const response = await fetch(url);
+
+  if (!response.ok) {
+    throw await createApiError(response, "Failed to fetch logs");
+  }
+
+  return response.json();
 }
 
 // GET one log
@@ -17,7 +28,7 @@ export async function getLogById(id) {
   const response = await fetch(`${API_URL}/${id}`);
 
   if (!response.ok) {
-    throw new Error("Failed to fetch log");
+    throw await createApiError(response, "Failed to fetch log");
   }
 
   const result = await response.json();
@@ -38,7 +49,7 @@ export async function createLog(date, targetCalories) {
   });
 
   if (!response.ok) {
-    throw new Error("Failed to create log");
+    throw await createApiError(response, "Failed to create log");
   }
 
   const result = await response.json();
@@ -56,7 +67,7 @@ export async function updateLog(id, updates) {
   });
 
   if (!response.ok) {
-    throw new Error("Failed to update log");
+    throw await createApiError(response, "Failed to update log");
   }
 
   const result = await response.json();
@@ -70,7 +81,7 @@ export async function deleteLog(id) {
   });
 
   if (!response.ok) {
-    throw new Error("Failed to delete log");
+    throw await createApiError(response, "Failed to delete log");
   }
 
   return true;

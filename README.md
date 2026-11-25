@@ -1,3 +1,14 @@
+## M2 Video recordings
+Maliki Cornwall-Douglas and Abeer Rashid: https://youtu.be/SH_FgKN1pHE
+- live demo
+- Abeer Rashid @AbeerRashid
+- Maliki Cornwall-Douglas @MalikiC-D
+
+## M3 Video recordings
+
+Owen Fedchenko (owenfdeds): https://youtu.be/gTUOPDgXm9k
+- live demo
+
 # cpan212-project-group-1
 # Calorie Goal Tracker
 ## Team Members
@@ -167,3 +178,68 @@ curl -i -X DELETE http://localhost:4000/api/logs/log-1
 # Delete an unknown log -> 404
 curl -i -X DELETE http://localhost:4000/api/logs/does-not-exist
 ```
+
+---
+
+## M4: Database Persistence (MongoDB & Mongoose)
+
+### Environment Setup
+1. Copy `.env.example` to `.env` in the project root:
+   ```bash
+   cp .env.example .env
+   ```
+2. Fill in your local secrets in `.env` (never commit `.env`):
+   ```env
+   PORT=4000
+   MONGODB_URI=mongodb+srv://<username>:<password>@<cluster-url>/calorie_tracker?retryWrites=true&w=majority
+   USDA_API_KEY=<your-usda-api-key>
+   ```
+3. Install dependencies and seed the database:
+   ```bash
+   npm install
+   npm run seed
+   ```
+4. Start the Express API (port `4000`) and Next.js frontend (port `3000`) in separate terminals:
+   ```bash
+   # Terminal 1 (project root)
+   npm run dev
+
+   # Terminal 2 (frontend)
+   cd frontend
+   npm install
+   npm run dev
+   ```
+
+### Data Models & Indexes (`api/models/`)
+| Model | Collection | Key Fields & Validation | Relationships & Indexes |
+| :--- | :--- | :--- | :--- |
+| **`DailyLog`** (`DailyLog.js`) | `dailylogs` | `userId` (default `"user-1"`), `date` (`YYYY-MM-DD`, required), `targetCalories` (integer, `1`–`5000`), `timestamps: true` | Compound indexes on `{ date: 1, _id: 1 }`, `{ targetCalories: 1, _id: 1 }`, and `{ createdAt: 1, _id: 1 }` for deterministic pagination; `toJSON` strips `__v` while preserving `_id`. |
+| **`MealEntry`** (`MealEntry.js`) | `mealentries` | `dailyLogId` (`ObjectId`, required), `userId`, `category` (`breakfast` \| `lunch` \| `dinner`), `foodName`, `fdcId`, `servings`, `servingSize`, `servingSizeUnit`, `caloriesPerServing`, `calculatedCalories` (server-calculated), `timestamps: true` | References `DailyLog` via `dailyLogId` (`ref: "DailyLog"`). Resolved with `.populate("dailyLogId", "date targetCalories")` on read; cascade-deleted when the parent `DailyLog` is removed. |
+
+### Querying, Filtering, Sorting & Pagination
+* **`GET /api/logs`** (validated in `api/utils/parseLogQuery.js`):
+  * **Date range:** `?from=YYYY-MM-DD&to=YYYY-MM-DD`
+  * **Calorie goal range:** `?minCalories=1800&maxCalories=2500`
+  * **Allowlisted sorting:** `?sort=-date` (default), `date`, `-targetCalories`, `targetCalories`, `-createdAt`, `createdAt` (paired with `_id` tie-breaking to match compound indexes)
+  * **Pagination:** `?page=1&limit=10` (`limit` capped at `50`); returns `count`, `total`, `page`, `limit`, `totalPages`, `hasNextPage`, and `hasPrevPage`
+* **`GET /api/logs/:logId/meals`**:
+  * Supports optional `?category=breakfast|lunch|dinner` and case-insensitive `?search=<foodName>` (regex-escaped).
+* **Query Safety:** `mongoose.set("sanitizeFilter", true)` is enabled globally in `api/config/database.js`, and server-validated range/regex operators are explicitly marked with `mongoose.trusted(...)`.
+
+### Error Handling
+* **`api/middleware/mongooseErrorHandler.js`** (registered right before `errorHandler.js` in `src/app.js`) maps Mongoose `ValidationError` and `CastError` into `400 Bad Request` responses with `{ success: false, error: { code, message, details: [{ field, message }] } }`.
+* **`api/utils/findByIdOr404.js`** validates `ObjectId` format before querying so invalid or missing IDs consistently return `404 Not Found`.
+
+### Seed Script (`api/scripts/seed.js`)
+Run from the project root:
+```bash
+npm run seed
+```
+Upserts **12 daily logs** (spanning 2 pages at the default `limit=10`) and **21 meal entries** across `breakfast`, `lunch`, and `dinner` using `findOneAndUpdate(..., { upsert: true, runValidators: true })`. Re-running the script updates records in place and produces zero duplicates.
+
+### Frontend Integration (`frontend/`)
+* **`frontend/components/LogBrowser.js`**: URL-synced filter, sort, and pagination controls on `/dailylogs` driven by Next.js `router.query` (with shallow routing so browser refreshes and Back/Forward preserve state), plus daily log creation and deletion.
+* **`frontend/services/apiError.js`**, **`logApi.js`**, **`mealApi.js`**: Extracts structured API error payloads (`message` + `details`) to render inline field-level errors directly next to form inputs.
+
+### AI Usage
+For the development of Milestone 4, I used AI-assisted tools (Google Gemini) to brainstorm how to structure the MongoDB/Mongoose integration cleanly alongside my teammates' existing routes and frontend components without breaking compatibility. I also used it as a learning and debugging reference to better understand concepts like schema validation, query sanitization, indexing, and URL-synced pagination in simpler terms, as well as to troubleshoot minor syntax bugs and local testing issues.
