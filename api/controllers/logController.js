@@ -1,115 +1,130 @@
-import { randomUUID } from "node:crypto";
-import { dailyLogs, mealEntries } from "../data/mockData.js";
+import mongoose from "mongoose";
+import { DailyLog } from "../models/DailyLog.js";
+import { MealEntry } from "../models/MealEntry.js";
+import { HttpError } from "../utils/http-error.js";
+import { findByIdOr404 } from "../utils/findByIdOr404.js";
+import { parseLogQuery } from "../utils/parseLogQuery.js";
 
-// GET /api/logs - Retrieve all daily logs
-export function getAllLogs(req, res, next) {
-    try { //In the future, this will be DailyLog.find() from MongoDB
-        res.status(200).json({
-            success: true,
-            count: dailyLogs.length,
-            data: dailyLogs
-        });
-    } catch (err) { // passes to notFound
-        next(err); //passes to errorHandler
+// GET /api/logs - List daily logs with allowlisted filtering, sorting, and pagination
+export async function getAllLogs(req, res, next) {
+  try {
+    const { filter, sort, page, limit, skip, errors } = parseLogQuery(req.query);
+
+    if (errors.length > 0) {
+      return res.status(400).json({
+        success: false,
+        error: {
+          code: 400,
+          message: "Invalid query parameters",
+          details: errors,
+        },
+      });
     }
+
+    // Run the page query and total count in parallel so pagination metadata stays accurate.
+    const [logs, total] = await Promise.all([
+      DailyLog.find(filter).sort(sort).skip(skip).limit(limit),
+      DailyLog.countDocuments(filter),
+    ]);
+
+    const totalPages = Math.ceil(total / limit);
+
+    res.status(200).json({
+      success: true,
+      count: logs.length,
+      total,
+      page,
+      limit,
+      totalPages,
+      hasNextPage: page < totalPages,
+      hasPrevPage: page > 1,
+      data: logs,
+    });
+  } catch (err) {
+    next(err);
+  }
 }
 
 // GET /api/logs/:id - Retrieve a single daily log by ID
-export function getLogById (req, res, next) {
-    try { //In the future, this will be DailyLog.find() from MongoDB
-        const { id } = req.params;
-        const log = dailyLogs.find(l => l._id === id);
+export async function getLogById(req, res, next) {
+  try {
+    const log = await findByIdOr404(DailyLog, req.params.id, "Daily log");
 
-        if (!log) {
-            const error = new Error(`Daily log with ID ${id} not found`);
-            error.status = 404;
-            throw error;
-        }
-
-        res.status(200).json({
-            success: true,
-            data: log
-        });
-    } catch (err) {
-        next(err); // Automatically caught by our error handler
-    }
+    res.status(200).json({
+      success: true,
+      data: log,
+    });
+  } catch (err) {
+    next(err);
+  }
 }
 
-// POST /api/logs - Create a new daily log (body already checked by validateLog)
-export function createLog(req, res, next) {
-    try {
-        const { date, targetCalories } = req.body;
-        const now = new Date().toISOString();
+// POST /api/logs - Create a new daily log
+export async function createLog(req, res, next) {
+  try {
+    // Pick only allowed fields from req.body so clients cannot overwrite userId or timestamps.
+    const { date, targetCalories } = req.body;
 
-        const newLog = {
-            _id: randomUUID(),
-            userId: "user-1", // no auth yet, so logs belong to the sample user
-            date,
-            targetCalories,
-            createdAt: now,
-            updatedAt: now
-        };
+    const newLog = await DailyLog.create({
+      date,
+      targetCalories,
+    });
 
-        dailyLogs.push(newLog);
-
-        res.status(201).json({
-            success: true,
-            data: newLog
-        });
-    } catch (err) {
-        next(err);
-    }
+    res.status(201).json({
+      success: true,
+      data: newLog,
+    });
+  } catch (err) {
+    next(err);
+  }
 }
 
-// PUT /api/logs/:id - Update an existing daily log (body already checked by validateUpdateLog)
-export function updateLog(req, res, next) {
-    try {
-        const { id } = req.params;
-        const { date, targetCalories } = req.body;
+// PUT /api/logs/:id - Update an existing daily log
+export async function updateLog(req, res, next) {
+  try {
+    const { id } = req.params;
 
-        const log = dailyLogs.find(l => l._id === id);
-
-        if (!log) {
-            const error = new Error(`Daily log with ID ${id} not found`);
-            error.status = 404;
-            throw error;
-        }
-        if (date !== undefined) log.date = date;
-        if (targetCalories !== undefined) log.targetCalories = targetCalories;
-        log.updatedAt = new Date().toISOString();
-
-        res.status(200).json({
-            success: true,
-            data: log
-        });
-    } catch (err) {
-        next(err);
+    if (!mongoose.isObjectIdOrHexString(id)) {
+      throw new HttpError(404, `Daily log with ID ${id} not found`);
     }
+
+    const updates = {};
+    if (req.body.date !== undefined) updates.date = req.body.date;
+    if (req.body.targetCalories !== undefined) updates.targetCalories = req.body.targetCalories;
+
+    // returnDocument: "after" returns the updated document (Mongoose 9 standard);
+    // runValidators: true ensures schema validation still runs on updates.
+    const updatedLog = await DailyLog.findByIdAndUpdate(id, updates, {
+      returnDocument: "after",
+      runValidators: true,
+    });
+
+    if (!updatedLog) {
+      throw new HttpError(404, `Daily log with ID ${id} not found`);
+    }
+
+    res.status(200).json({
+      success: true,
+      data: updatedLog,
+    });
+  } catch (err) {
+    next(err);
+  }
 }
 
-// DELETE /api/logs/:id - Delete a daily log (and its meals), responds 204 with no body
-export function deleteLog(req, res, next) {
-    try {
-        const { id } = req.params;
-        const index = dailyLogs.findIndex(l => l._id === id);
+// DELETE /api/logs/:id - Delete a daily log and cascade-delete all of its meal entries
+export async function deleteLog(req, res, next) {
+  try {
+    const log = await findByIdOr404(DailyLog, req.params.id, "Daily log");
 
-        if (index === -1) {
-            const error = new Error(`Daily log with ID ${id} not found`);
-            error.status = 404;
-            throw error;
-        }
+    // Remove child meals first so no orphaned MealEntry documents remain in MongoDB.
+    await MealEntry.deleteMany({ dailyLogId: log._id });
+    await log.deleteOne();
 
-        dailyLogs.splice(index, 1);
-
-        // remove this log's meals too so none are left orphaned
-        for (let i = mealEntries.length - 1; i >= 0; i--) {
-            if (mealEntries[i].dailyLogId === id) mealEntries.splice(i, 1);
-        }
-
-        res.status(204).send();
-    } catch (err) {
-        next(err);
-    }
+    res.status(204).send();
+  } catch (err) {
+    next(err);
+  }
 }
 
 /*
